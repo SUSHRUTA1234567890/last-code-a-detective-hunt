@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tech Murder Mystery - The Last Code</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="game-wrapper">
+        <!-- Welcome Screen -->
+        <div id="welcomeScreen" class="screen active">
+            <div class="welcome-container">
+                <h1>🔍 THE LAST CODE</h1>
+                <p class="subtitle">A Tech Murder Mystery</p>
+                <div class="story-box">
+                    <p><strong>📅 DATE:</strong> March 15, 2026</p>
+                    <p><strong>👤 VICTIM:</strong> David Chen, 32 - Lead Software Architect</p>
+                    <p><strong>⚠️ STATUS:</strong> DECEASED</p>
+                    <p><strong>📍 LOCATION:</strong> His home office</p>
+                    <hr>
+                    <p>Detective, you've arrived at the crime scene. The victim's computer is still running. Use ANY password to access it.</p>
+                    <p>Navigate through files, solve riddles, and unlock the truth before the murderer returns...</p>
+                </div>
+                <button class="btn btn-start" onclick="startGame()">ENTER CRIME SCENE</button>
+            </div>
+        </div>
+
+        <!-- Computer Screen -->
+        <div id="computerScreen" class="screen">
+            <div class="monitor">
+                <div class="monitor-header">
+                    <span class="title-bar">CRIME_SCENE_OS v1.0</span>
+                    <span class="close-btn" onclick="logout()">✕</span>
+                </div>
+                
+                <div class="monitor-body">
+                    <!-- Login Screen -->
+                    <div id="loginPage" class="page active">
+                        <div class="login-container">
+                            <div class="ascii-art">
+                                <pre>
+    ╔═══════════════════════════════╗
+    ║   DETECTIVE LOGIN SYSTEM      ║
+    ║   CRIME SCENE INVESTIGATION   ║
+    ╚═══════════════════════════════╝
+                                </pre>
+                            </div>
+                            <div class="login-form">
+                                <label>Enter any password to access:</label>
+                                <input type="password" id="loginPassword" placeholder="••••••••" onkeypress="handleLoginKey(event)">
+                                <button class="btn" onclick="loginComputer()">LOGIN</button>
+                                <p class="hint-text">💡 Hint: Any password works - David left the door open for you</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Desktop Page -->
+                    <div id="desktopPage" class="page">
+                        <div class="desktop-grid">
+                            <div class="file-icon" onclick="openFile('riddle1')">
+                                <div class="icon">📄</div>
+                                <div class="label">riddle_1.txt</div>
+                                <div class="locked-badge">🔒 LOCKED</div>
+                            </div>
+                            <div class="file-icon" onclick="openFile('riddle2')">
+                                <div class="icon">📄</div>
+                                <div class="label">riddle_2.txt</div>
+                                <div class="locked-badge">🔒 LOCKED</div>
+                            </div>
+                            <div class="file-icon" onclick="openFile('riddle3')">
+                                <div class="icon">📄</div>
+                                <div class="label">riddle_3.txt</div>
+                                <div class="locked-badge">🔒 LOCKED</div>
+                            </div>
+                            <div class="file-icon" onclick="openFile('finalEvidence')">
+                                <div class="icon">⚠️</div>
+                                <div class="label">FINAL_EVIDENCE.txt</div>
+                                <div class="locked-badge">🔒 LOCKED</div>
+                            </div>
+                        </div>
+                        <div class="progress-section">
+                            <p id="progressText">Files Unlocked: 0/4</p>
+                            <div class="progress-bar">
+                                <div id="progressFill" class="progress-fill"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- File Viewer Page -->
+                    <div id="fileViewerPage" class="page">
+                        <div class="file-viewer">
+                            <button class="btn-back" onclick="backToDesktop()">← BACK TO DESKTOP</button>
+                            <div class="file-header">
+                                <h3 id="fileName">File Name</h3>
+                            </div>
+                            <div class="file-content">
+                                <div id="fileContent" class="content-text"></div>
+                                <div id="riddleSection" class="riddle-section" style="display:none;">
+                                    <div id="riddleText" class="riddle-text"></div>
+                                    <div id="hintArea" class="hint-area"></div>
+                                    <div class="password-prompt">
+                                        <label>🔑 PASSWORD:</label>
+                                        <input type="password" id="filePassword" placeholder="Enter password..." onkeypress="handlePasswordKey(event)">
+                                        <button class="btn" onclick="unlockFile()">UNLOCK</button>
+                                        <p id="passwordFeedback" class="feedback"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Murderer Confrontation Screen -->
+        <div id="confrontationScreen" class="screen">
+            <div class="crime-scene-bg">
+                <div class="confrontation-container">
+                    <div class="murderer-silhouette">
+                        <div class="figure"></div>
+                    </div>
+                    <p class="murderer-text" id="murdererText">YOU SHOULDN'T HAVE FIGURED IT OUT...</p>
+                </div>
+
+                <!-- Weapon Selection -->
+                <div class="weapon-selector">
+                    <div class="timer-box">
+                        <p class="timer-label">CHOOSE WEAPON</p>
+                        <div class="timer-display">
+                            <span id="timerCount">3</span>s
+                        </div>
+                    </div>
+
+                    <div class="weapons-grid">
+                        <div class="weapon-btn" onclick="selectWeapon('gun')" data-weapon="gun">
+                            <div class="weapon-emoji">🔫</div>
+                            <div class="weapon-label">GUN</div>
+                        </div>
+                        <div class="weapon-btn" onclick="selectWeapon('knife')" data-weapon="knife">
+                            <div class="weapon-emoji">🔪</div>
+                            <div class="weapon-label">KNIFE</div>
+                        </div>
+                        <div class="weapon-btn" onclick="selectWeapon('punch')" data-weapon="punch">
+                            <div class="weapon-emoji">👊</div>
+                            <div class="weapon-label">PUNCH</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div id="gameOverScreen" class="screen">
+            <div class="game-over-container">
+                <h1 id="gameOverTitle">GAME OVER</h1>
+                <div id="gameOverContent" class="game-over-content"></div>
+                <button class="btn btn-restart" onclick="restartGame()">PLAY AGAIN</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
